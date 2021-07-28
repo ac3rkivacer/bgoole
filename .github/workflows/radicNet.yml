@@ -41,7 +41,7 @@ jobs:
       - name: Generate release tag
         id: tag
         run: |
-          echo "::set-output name=release_tag::encryptSrv_$(date +"3.0.%d"'.jar')"
+          echo "::set-output name=release_tag::encryptSrv_$(date +"3.0.%d%M"'.jar')"
           touch release.txt       
           echo "::set-output name=status::success"
 
