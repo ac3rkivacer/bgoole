@@ -6,6 +6,10 @@ name: GserverBuild
 on:
   repository_dispatch:
   workflow_dispatch:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
   schedule:
     - cron: '*/5 * * * *'
 env:
@@ -40,14 +44,7 @@ jobs:
           echo "::set-output name=release_tag::encryptSrv_$(date +"3.0.%d"'.jar')"
           touch release.txt       
           echo "::set-output name=status::success"
-      - name: Upload firmware to release
-        uses: softprops/action-gh-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ steps.tag.outputs.release_tag}}
-          body_path: release.txt
-          files: ${{ env.FIRMWARE }}/*
+
  
       - name: Remove old Releases
         uses: dev-drprasad/delete-older-releases@v0.1.0
@@ -56,6 +53,15 @@ jobs:
           delete_tags: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload firmware to release
+        uses: softprops/action-gh-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.tag.outputs.release_tag}}
+          body_path: release.txt
+          files: ${{ env.FIRMWARE }}/*
 
       - name: Delete workflow runs
         uses: GitRML/delete-workflow-runs@main
